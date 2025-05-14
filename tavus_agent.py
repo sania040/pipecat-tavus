@@ -74,21 +74,21 @@ class MicInput(AsyncGeneratorProcessor):
             print(f"  {i}: {device['name']} (in: {device['max_input_channels']}, out: {device['max_output_channels']})")
         
         print("🎙 Speak now — recording 5 seconds...")
-        # Use float32 for better amplitude control
+        # Using float32 for better amplitude control
         audio = sd.rec(int(fs * duration), samplerate=fs, channels=1, dtype='float32')
         sd.wait()
         print("✅ Audio captured.")
         
-        # Apply gain to increase volume (adjust as needed)
+        # Applying gain to increase volume (adjust as needed)
         gain = 15.0  # Increase volume by 15x
         audio = audio * gain
         
-        # Clip to prevent distortion and convert to int16
+        # Clipping to prevent distortion and convert to int16
         audio_array = np.int16(np.clip(audio * 32767, -32768, 32767)).flatten()
         
         print(f"🔍 Audio stats: length={len(audio_array)}, max={np.max(audio_array)}, min={np.min(audio_array)}")
         
-        # Check if audio is still silent after gain
+        # Checking if audio is still silent after gain
         if np.max(np.abs(audio_array)) < 1000:
             print("⚠ Warning: Audio volume is still very low even after applying gain.")
             print("💡 Try checking your system's microphone settings or connecting an external microphone.")
@@ -101,14 +101,14 @@ class MicInput(AsyncGeneratorProcessor):
         print("✅ Audio frame yielded to pipeline.")
 
 
-# Use FrameProcessor instead of Processor
+# Using FrameProcessor instead of Processor
 class PrintOutput(FrameProcessor):
     async def process_frame(self, frame, *args, **kwargs):
         print(f"🔊 Output frame type: {type(frame).__name__}")
         print(f"🔊 Output frame content: {frame}")
         return frame  
 
-# Create a simple context aggregator that works around the compatibility issue
+# Creating a simple context aggregator that works around the compatibility issue
 class SimpleContextAggregator(FrameProcessor):
     def __init__(self, messages, role="user"):
         super().__init__()
@@ -116,11 +116,11 @@ class SimpleContextAggregator(FrameProcessor):
         self.role = role
 
     async def process_frame(self, frame, direction):
-        # Check if the frame contains text from transcription
+        # Checking if the frame contains text from transcription
         if isinstance(frame, dict) and "text" in frame:
             print(f"🗣 User said: {frame['text']}")
             
-            # Add the user's message to the context
+            # Addong the user's message to the context
             if self.role == "user":
                 # For user context, we're receiving text from STT
                 self.messages.append({"role": "user", "content": frame["text"]})
@@ -133,7 +133,7 @@ class SimpleContextAggregator(FrameProcessor):
         
         return frame
 
-# Change the context aggregator setup in the main function
+# Changing the context aggregator setup in the main function
 async def main():
     print("🚀 Starting Tavus Agent pipeline...")
     async with aiohttp.ClientSession() as session:
@@ -159,8 +159,8 @@ async def main():
             },
         ]
 
-        # Create the context without using OpenAILLMContext
-        # Instead, create the aggregators directly and pass the messages
+        # Creating the context without using OpenAILLMContext
+        # Instead, creating the aggregators directly and pass the messages
         user_context = SimpleContextAggregator(messages=messages, role="user")
         assistant_context = SimpleContextAggregator(messages=messages, role="assistant")
 
@@ -188,7 +188,6 @@ async def main():
             ),
         )
 
-        # Modify the PipelineRunner instantiation to handle Windows signal limitations
         if sys.platform == 'win32':
             # Windows-specific implementation
             # Monkey patch the _setup_sigint method to avoid the NotImplementedError
