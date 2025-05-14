@@ -1,0 +1,5 @@
+python-dotenv
+pipecat-ai
+daily-python~=0.17.0
+cartesia~=1.4.0
+numpy==1.26.4
