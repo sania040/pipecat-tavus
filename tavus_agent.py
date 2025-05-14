@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, r"D:/projects/pipecat-tavus/pipecat/src")
+
 
 import asyncio
 import os

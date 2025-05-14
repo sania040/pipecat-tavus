@@ -1,0 +1,2 @@
+2025-05-13 22:09:25,624 - Error during recording or transcription: 'OpenAISTTService' object has no attribute 'transcribe'
+2025-05-13 22:11:26,709 - Error duringcording or transcription: 'OpenAISTTService' object has no attribute 'transcribe_from_file'
